@@ -1,1 +1,157 @@
-"Hello World" 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    body {
+      background-color: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+  <div style="display:flex;">
+    <div style="max-width: 50%;">
+      <div>
+        <button onclick="getProjectData()">
+            <strong>
+              Get data for project
+            </strong>
+          </button>
+      </div>
+      <div>
+        <button onclick="computeCostUsingServer()">
+            <strong>
+              Get Cost from Cost server
+            </strong>
+          </button>
+      </div>
+      <div>
+        <button onclick="getCostQuery()">
+            <strong>
+              Get Cost Query
+            </strong>
+          </button>
+      </div>
+      <div id="focusOn">
+      </div>
+      <h4>
+      Token:
+      </h4>
+      <pre style="max-width:100%;overflow-x:auto">null</pre>
+    </div>
+    <div>
+
+    <h4>
+    Event log:
+    </h4>
+    <ol id="event_log" reversed>
+    </ol> 
+    </div>
+
+
+
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.js" ></script>
+  <script>
+    console.log('listening for messages in Tab');
+
+    window.addEventListener('message', function(event) {
+
+        // IMPORTANT: Check the origin of the data!
+        /*
+        if (~event.origin.indexOf('http://localhost:4200')) {
+            console.log(event.data);
+            addTextNode( JSON.stringify(event.data) );
+        } else {
+            // Not coming from correct origin
+            return;
+        }
+        */
+        addTextNode( JSON.stringify(event.data, null, 2) );
+        console.log(event.data )
+        if (
+          (event.data.event != 'DiDelete') &&
+          (event.data.event != 'didDeleteFromNetwork') &&
+          (event.data.event != 'unselect')
+        ) {
+          const focusOn = document.getElementById("focusOn")
+          if (event.data.type) {
+            focusOn.innerHTML = 
+            `
+            <button onclick="focusOn('${event.data.type}', '${event.data.id}')">
+              <strong>
+                Focus on ${event.data.type} with id ${event.data.id}
+              </strong>
+            </button>
+            <button onclick="getCostQueryForItem('${event.data.type}', '${event.data.id}')">
+              <strong>
+                Get Cost Query For id ${event.data.id}
+              </strong>
+            </button>
+            `
+          }
+        }
+    });
+
+    function getCostQuery() {
+      console.log('getCostQuery')
+      const message = {
+        event:"getCostQuery",
+      }
+      window.parent.postMessage(message, '*')
+    }
+    function getCostQueryForItem(type, id) {
+      console.log('getCostQuery', type, id)
+      const message = {
+        event:"getCostQuery",
+        data: {
+          items:[{
+            type,
+            id
+          }],
+          queryId:`query_${id}`
+        }
+      }
+      window.parent.postMessage(message, '*')
+    }
+
+    function computeCostUsingServer() {
+      console.log('computeCostUsingServer')
+      const message = {
+        event:"computeCostUsingServer"  
+      }
+      window.parent.postMessage(message, '*')
+    }
+    function getProjectData() {
+      console.log('getProjectData')
+      const message = {
+        event:"getProjectData"  
+      }
+      window.parent.postMessage(message, '*')
+    }
+    function focusOn(type, id) {
+      console.log(`zoomOn ${type}, ${id}`)
+      const message = {
+        event: 'zoomOn',
+        data: {
+          type,
+          id
+        }
+      }
+      window.parent.postMessage(message, '*')
+    }
+    function addTextNode(text) {
+      var newDiv = document.createElement("li");
+      newDiv.innerHTML = `[${moment().format('HH:MM:ss')}]<pre><code>${text}</code></pre>`;
+
+      event_log = document.getElementById("event_log");
+      event_log.prepend(newDiv);
+    }
+
+  </script>
+</body>
+</html>
