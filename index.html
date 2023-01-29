@@ -55,10 +55,13 @@
 
 
   </div>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.js" ></script>
   <script>
     console.log('listening for messages in Tab');
-
+    $(document).ready(function(){
+      requestProject();
+    });
     window.addEventListener('message', function(event) {
 
         // IMPORTANT: Check the origin of the data!
@@ -150,6 +153,32 @@
 
       event_log = document.getElementById("event_log");
       event_log.prepend(newDiv);
+    }
+
+    function requestProject()
+    {
+      var form = new FormData();
+      form.append("projectId", "-NLNCU8RjhjzpanaD8nl");
+
+      var settings = {
+        "url": "https://legacyapi.app.fieldtwin.com/API/v1.9/-NLNCU8RjhjzpanaD8nl",
+        "method": "GET",
+        "timeout": 0,
+        "headers": {
+          "token": "e0b28a17-8cfb-4e03-b264-92b6b704df08",
+          "Authorization": "Bearer $JWT_TOKEN",
+          "only-active": "False"
+        },
+        "processData": false,
+        "mimeType": "multipart/form-data",
+        "contentType": false,
+        "data": form
+      };
+
+      $.ajax(settings).done(function (response) {
+        console.log(response);
+        addTextNode( JSON.stringify(response, null, 2) );
+      });
     }
 
   </script>
