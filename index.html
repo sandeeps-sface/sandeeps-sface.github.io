@@ -67,7 +67,7 @@
                 getApiKey(event.data.account);
            }
 
-           if(event.data.event=="getProjectData") {
+           if(event.data.event=="projectData") {
              createProject(event.data);
            }
             addTextNode(JSON.stringify(event.data, null, 2));
