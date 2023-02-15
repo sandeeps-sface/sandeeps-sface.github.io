@@ -166,18 +166,20 @@
         }
 
         function getApiKey(accountId) {
-            var settings = {
-                "url": "http://54.236.41.3:8042/get-api-key",
-                "method": "POST",
-                "headers": {
+            $.ajax({
+                type:"POST",
+                url: "http://54.236.41.3:8042/get-api-key",
+                headers:{
                     "Access-Control-Allow-Origin": "*",
                     "accountId": accountId
+                },
+                beforeSend: function (request) {
+                    request.withCredentials = false;
+                },
+                success: function(data) {
+                    console.log("API-KEY"+data);
                 }
-            };
-
-            $.ajax(settings).done(function (response) {
-                console.log("API-KEY"+response);
-            });
+            });           
         }
 
     </script>
