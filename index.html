@@ -70,6 +70,10 @@
            if(event.data.event=="projectData") {
              createProject(event.data);
            }
+           if(event.data.event=="select") {
+            showILTForm(event.data.data);
+           }
+           
             addTextNode(JSON.stringify(event.data, null, 2));
             console.log(event.data)
             if (
@@ -213,6 +217,30 @@
                 },
                 success: function(data) {
                     console.log("API-KEY"+data);
+                }
+            });           
+        }
+
+        function showILTForm(data) {
+            $.ajax({
+                type:"POST",
+                url: "https://futureonintegration.sface.no/create-form",
+                headers:{                    
+                    "accountId": accountId,
+                    "api_key": apiKey,                    
+                },
+                contentType: "application/json; charset=utf-8",
+                data:JSON.stringify({
+                    projectID: projectId,
+                    subProjectID: subProjectId,
+                    ILTObjectId:data.id
+                }),
+                beforeSend: function (request) {
+                    request.withCredentials = false;
+                },
+                success: function(data) {
+                    console.log("API-KEY"+data);
+                    $("#attributes_section").html(data.html);
                 }
             });           
         }
