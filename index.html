@@ -35,5 +35,131 @@
             </div>
         </div>
     </section>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.js" ></script>
+    <script>
+        console.log('listening for messages in Tab');
+        $(document).ready(function(){
+          requestProject();
+        });
+        window.addEventListener('message', function(event) {
+    
+            // IMPORTANT: Check the origin of the data!
+            /*
+            if (~event.origin.indexOf('http://localhost:4200')) {
+                console.log(event.data);
+                addTextNode( JSON.stringify(event.data) );
+            } else {
+                // Not coming from correct origin
+                return;
+            }
+            */
+            addTextNode( JSON.stringify(event.data, null, 2) );
+            console.log(event.data )
+            if (
+              (event.data.event != 'DiDelete') &&
+              (event.data.event != 'didDeleteFromNetwork') &&
+              (event.data.event != 'unselect')
+            ) {
+              const focusOn = document.getElementById("focusOn")
+              if (event.data.type) {
+                focusOn.innerHTML = 
+                `
+                <button onclick="focusOn('${event.data.type}', '${event.data.id}')">
+                  <strong>
+                    Focus on ${event.data.type} with id ${event.data.id}
+                  </strong>
+                </button>
+                <button onclick="getCostQueryForItem('${event.data.type}', '${event.data.id}')">
+                  <strong>
+                    Get Cost Query For id ${event.data.id}
+                  </strong>
+                </button>
+                `
+              }
+            }
+        });
+    
+        function getCostQuery() {
+          console.log('getCostQuery')
+          const message = {
+            event:"getCostQuery",
+          }
+          window.parent.postMessage(message, '*')
+        }
+        function getCostQueryForItem(type, id) {
+          console.log('getCostQuery', type, id)
+          const message = {
+            event:"getCostQuery",
+            data: {
+              items:[{
+                type,
+                id
+              }],
+              queryId:`query_${id}`
+            }
+          }
+          window.parent.postMessage(message, '*')
+        }
+    
+        function computeCostUsingServer() {
+          console.log('computeCostUsingServer')
+          const message = {
+            event:"computeCostUsingServer"  
+          }
+          window.parent.postMessage(message, '*')
+        }
+        function getProjectData() {
+          console.log('getProjectData')
+          const message = {
+            event:"getProjectData"  
+          }
+          window.parent.postMessage(message, '*')
+        }
+        function focusOn(type, id) {
+          console.log(`zoomOn ${type}, ${id}`)
+          const message = {
+            event: 'zoomOn',
+            data: {
+              type,
+              id
+            }
+          }
+          window.parent.postMessage(message, '*')
+        }
+        function addTextNode(text) {
+          var newDiv = document.createElement("li");
+          newDiv.innerHTML = `[${moment().format('HH:MM:ss')}]<pre><code>${text}</code></pre>`;
+    
+          event_log = document.getElementById("event_log");
+          event_log.prepend(newDiv);
+        }
+    
+        function requestProject()
+        {
+          var form = new FormData();
+          form.append("projectId", "-NLNCU8RjhjzpanaD8nl");
+    
+          var settings = {
+            "url": "https://legacyapi.app.fieldtwin.com/API/v1.9/-NLNCU8RjhjzpanaD8nl",
+            "method": "GET",
+            "timeout": 0,
+            "headers": {
+              "token": "e0b28a17-8cfb-4e03-b264-92b6b704df08",
+              "Authorization": "Bearer $JWT_TOKEN",
+              "only-active": "False"
+            },
+            "processData": false,
+            "mimeType": "multipart/form-data",
+            "contentType": false,
+            "data": form
+          };
+    
+          $.ajax(settings).done(function (response) {
+            console.log(response);
+            addTextNode( JSON.stringify(response, null, 2) );
+          });
+        }
+    
+      </script>
 </body>
 </html>
