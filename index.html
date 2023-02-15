@@ -200,13 +200,14 @@
                 url: "https://futureonintegration.sface.no/create-projects",
                 headers:{                    
                     "accountId": accountId,
-                    "api_key": apiKey
+                    "api_key": apiKey,                    
                 },
-                body: {
+                contentType: "application/json; charset=utf-8",
+                data:JSON.stringify({
                     projectId: projectId,
                     subProjectId: subProjectId,
                     project_data:data
-                },
+                }),
                 beforeSend: function (request) {
                     request.withCredentials = false;
                 },
