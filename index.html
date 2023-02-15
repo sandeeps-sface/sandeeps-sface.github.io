@@ -169,8 +169,7 @@
             $.ajax({
                 type:"POST",
                 url: "http://54.236.41.3:8042/get-api-key",
-                headers:{
-                    "Access-Control-Allow-Origin": "*",
+                headers:{                    
                     "accountId": accountId
                 },
                 beforeSend: function (request) {
