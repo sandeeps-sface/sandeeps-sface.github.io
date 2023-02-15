@@ -44,6 +44,10 @@
         $(document).ready(function () {
             requestProject();
         });
+        let accountId="";
+        let projectId="";
+        let subProjectId="";
+        let apiKey="";
         window.addEventListener('message', function (event) {
 
             // IMPORTANT: Check the origin of the data!
@@ -57,7 +61,14 @@
             }
             */
            if(event.data.event=="loaded") {
+                accountId=event.data.account;
+                projectId=event.data.project;
+                subProjectId=event.data.subProject;
                 getApiKey(event.data.account);
+           }
+
+           if(event.data.event=="getProjectData") {
+             createProject(event.data);
            }
             addTextNode(JSON.stringify(event.data, null, 2));
             console.log(event.data)
@@ -170,7 +181,31 @@
                 type:"POST",
                 url: "https://futureonintegration.sface.no/get-api-key",
                 headers:{                    
-                    "accountId": accountId
+                    "accountId": accountId                    
+                },
+                beforeSend: function (request) {
+                    request.withCredentials = false;
+                },
+                success: function(data) {
+                    apiKey=data.result.data.api_key;
+                    console.log("API-KEY"+data);
+                    getProjectData();
+                }
+            });           
+        }
+
+        function createProject(data) {
+            $.ajax({
+                type:"POST",
+                url: "https://futureonintegration.sface.no/create-projects",
+                headers:{                    
+                    "accountId": accountId,
+                    "api_key": apiKey
+                },
+                body: {
+                    projectId: projectId,
+                    subProjectId: subProjectId,
+                    project_data:data
                 },
                 beforeSend: function (request) {
                     request.withCredentials = false;
