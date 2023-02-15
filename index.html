@@ -136,7 +136,7 @@
             newDiv.innerHTML = `[${moment().format('HH:MM:ss')}]<pre><code>${text}</code></pre>`;
 
             event_log = document.getElementById("event_log");
-            event_log.prepend(newDiv);
+           // event_log.prepend(newDiv);
         }
 
         function requestProject() {
@@ -169,6 +169,7 @@
                 "url": "http://54.236.41.3:8042/get-api-key",
                 "method": "POST",
                 "headers": {
+                    "Access-Control-Allow-Origin": "*",
                     "accountId": accountId
                 }
             };
