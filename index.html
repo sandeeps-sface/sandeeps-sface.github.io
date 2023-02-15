@@ -71,7 +71,7 @@
              createProject(event.data);
            }
            if(event.data.event=="select") {
-            showILTForm(event.data.data);
+            showILTForm(event.data);
            }
            
             addTextNode(JSON.stringify(event.data, null, 2));
@@ -233,7 +233,7 @@
                 data:JSON.stringify({
                     projectID: projectId,
                     subProjectID: subProjectId,
-                    ILTObjectId:data.id
+                    ILTObjectId: data.id
                 }),
                 beforeSend: function (request) {
                     request.withCredentials = false;
